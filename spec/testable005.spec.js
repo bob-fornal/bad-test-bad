@@ -1,61 +1,29 @@
 var testableCode = {
-  getRejectedPromise: function() {
-    return new Promise((resolve, reject) => { 
-      setTimeout(() => {
-          reject('fail');
-      }, 1000);
-    });
+  getString: function(a, b, len) {
+    return (a + b).substr(0, len);
+  },
+  getShortName: function(first, last) {
+    return testableCode.getString(last + ", ", first, 10);
   }
 };
 
-describe('Bad Test, Bad ... False positives', function() {
+describe('Bad Test, Bad ... Testing the mock', function() {
 
-  /* BAD PATTERN: False positive */
-  it('expect the code inside setTimeout to be ignored', function(){
-    setTimeout(function() {
-      expect(true).toEqual(false);
-    }, 1000);
-  });
-
-  /* BAD PATTERN: False positive */
-  it('test with no expect will always pass', function(){
-    const hello = 'World';
-    const life = 42;
-  });
-
-  /* GOOD PATTERN: Handling Asynchronous Behavior */
-  it('expect the code inside setTimeout to run', function(done){
-    setTimeout(function() {
-      expect(true).toEqual(false);
-      done();
-    }, 1000);
-  });
-
-  /* GOOD PATTERN: Include expect */
-  it('test with an expect can pass or fail', function(){
-    const hello = 'World';
-    const life = 42;
-    expect(true).toEqual(false);
-  });  
-
-  /* BAD PATTERN: False positive */
-  it('expects rejection to occur (should pass)', function() {
-    testableCode.getRejectedPromise().then(function(result) {
-      expect(result).toEqual('fail');
+  describe('expects getString to return', function() {
+    it('a + b at len', function() {
+      var a = "abc";
+      var b = "def";
+      var len = 4;
+  
+      expect(testableCode.getString(a, b, len)).toEqual("abcd");
     });
   });
-
-  /* GOOD PATTERN: Handling Asynchronous Behavior */
-  it('expects rejection to occur (should follow catch)', function(done) {
-    testableCode.getRejectedPromise()
-      .then(function(result) {
-        expect(result).toEqual('pass');
-        done();
-      })
-      .catch(function(result) {
-        expect(result).toEqual('fail');
-        done();
-      });
+  
+  describe('expects getShortName to return', function() {
+    it('a name truncated to 10 characters', function() {
+      expect(testableCode.getShortName("Bob4567890", "Last"))
+        .toEqual("Last, Bob4");
+    });
   });
-
+    
 });
